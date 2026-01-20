@@ -21,7 +21,8 @@ const jupiterTexture = loader.load("media/jupiter.jpg");
 const sunTexture = loader.load("media/sun.jpg");
 
 loader.load("media/stars.jpg", texture => {
-    texture.ColorSpace =  THREE.SRGBColorSpace;
+    texture.mapping = THREE.EquirectangularReflectionMapping;
+    texture.colorSpace = THREE.SRGBColorSpace;
     scene.background = texture;
 });
 
