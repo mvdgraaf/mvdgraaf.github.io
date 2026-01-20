@@ -443,13 +443,14 @@ function updateHUD() {
         Camera Y: ${pos.y.toFixed(2)} <br>
         Camera Z: ${pos.z.toFixed(2)} <br>
         <br>
-        Speed: ${timeScale.toFixed(1)}x
+        Speed: ${timeScale.toFixed(1)}
         <br>
         ESC knop om muis te locken, klikken om te unlocken.<br>
         Muis om te draaien.<br>
-        W, A, S, D om te bewegen.<br>
+        W, A, S, D om te bewegen.<br>       
         Spatie om omhoog te gaan.<br>
-        Shift om omlaag te gaan.
+        Shift om omlaag te gaan.<br>
+        [, ], 0 voor het instellen van de snelheid.
     `;
 }
 
