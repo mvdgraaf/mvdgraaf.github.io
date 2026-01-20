@@ -443,7 +443,7 @@ function updateHUD() {
         Camera Y: ${pos.y.toFixed(2)} <br>
         Camera Z: ${pos.z.toFixed(2)} <br>
         <br>
-        Speed: ${timeScale.toFixed(1)}
+        Speed: ${timeScale.toFixed(1)}x <br>
         <br>
         ESC knop om muis te locken, klikken om te unlocken.<br>
         Muis om te draaien.<br>
