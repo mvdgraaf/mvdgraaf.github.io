@@ -1,33 +1,120 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>Computer Graphics</title>
-  <style>
-    body { margin: 0; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Computer Graphics</title>
+    <style>
+        /* Basis styling om de hele pagina te vullen */
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Zorgt dat je geen scrollbars krijgt door de Three.js canvas */
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Achtergrond voor als Three.js nog laadt */
+            background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
+        }
+
+        /* De container voor het glazen kaartje */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05); /* Zeer transparant wit */
+            backdrop-filter: blur(15px); /* Het magische glas-effect */
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtiele rand */
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            color: white;
+            z-index: 100; /* Zorgt dat het boven de Three.js canvas zweeft */
+            transition: transform 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-size: 28px;
+        }
+
+        p {
+            margin: 5px 0;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        .student-id {
+            font-family: monospace;
+            font-size: 1.1em;
+            margin-top: 15px;
+            display: block;
+        }
+
+        /* De knop */
+        .btn-continue {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 30px;
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+        }
+
+        .btn-continue:hover {
+            background: white;
+            color: #000;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        /* Overlay om alles eronder iets donkerder te maken */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 50;
+        }
+    </style>
 </head>
 <body>
-<div id="hud" style="
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    color: white;
-    font-family: monospace;
-    font-size: 14px;
-    background-color: rgba(0,0,0,0.3);
-    padding: 5px;
-    border-radius: 5px;
-    pointer-events: none;
-"></div>
 
-<script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three@0.182.0/build/three.module.js"
+<div class="overlay" id="overlay"></div>
+
+<div class="glass-card" id="welcome-card">
+    <h1>Computer Graphics</h1>
+    <p>Merijn van der Graaf</p>
+    <span class="student-id">1096446</span>
+
+    <a href="/simulation.html" class="btn-continue">Doorgaan</a>
+</div>
+
+<script>
+    function startSimulation() {
+        document.getElementById('welcome-card').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+
     }
-  }
 </script>
-<script type="module" src="/index.js"></script>
+
 </body>
 </html>
