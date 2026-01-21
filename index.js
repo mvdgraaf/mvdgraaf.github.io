@@ -465,18 +465,12 @@ const satellites = [
 // Astroid
 // =====================
 const astroids = [];
-const numAstroids = 8000;
+const numAstroids = 1000;
 
 for (let i = 0; i < numAstroids; i++) {
-    // Variatie in afstand (bijv. tussen Mars en Jupiter)
     const distance = 90 + Math.random() * 10;
-
-    // Variatie in grootte
     const size = 0.1 + Math.random() * 0.2;
-
-    // Willekeurige start-rotatie voor de baan
     const startAngle = Math.random() * Math.PI * 2;
-
     const a = createAstroid(
         size,
         distance,
@@ -485,10 +479,7 @@ for (let i = 0; i < numAstroids; i++) {
         Math.random() * 0.02,          // Eigen rotatie
         0.5                // Veel displacement voor grillige vorm
     );
-
-    // Zet de orbit op de juiste beginpositie
     a.orbit.rotation.y = startAngle;
-
     astroids.push(a);
 }
 // =====================
