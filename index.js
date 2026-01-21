@@ -70,29 +70,30 @@ document.body.appendChild(renderer.domElement);
 // Shader
 // =====================
 const globalPlanetMaterial = new THREE.ShaderMaterial({
-        uniforms:
-            {
-                uTexture: { value: null },
-                uLightDir: { value: new THREE.Vector3(1, 1, 1).normalize()},
-                uSunPosition: { value: new THREE.Vector3(0, 0, 0) }
-            },
-        vertexShader: `
-                varying vec2 vUv;
-                varying vec3 vNormal;
-                varying vec3 vWorldPosition;
-                
-                void main() {
-                            vUv = uv;
-                            vNormal = normalize(mat3(modelMatrix) * normal);
-                            vec4 worldPos = modelMatrix * vec4(position, 1.0);
-                            vWorldPosition = worldPos.xyz;
-                
-                            gl_Position = projectionMatrix * viewMatrix * worldPos;
-                }
-            `,
+    uniforms: {
+        uTexture: { value: null },
+        uColor: { value: new THREE.Color(0xffffff) },
+        uSunPosition: { value: new THREE.Vector3(0, 0, 0) },
+        uHasTexture: { value: 0.0 },
+    },
+    vertexShader: `
+        varying vec2 vUv;
+        varying vec3 vNormal;
+        varying vec3 vWorldPosition;
+        
+        void main() {
+            vUv = uv;
+            vNormal = normalize(mat3(modelMatrix) * normal);
+            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+            vWorldPosition = worldPos.xyz;
+            gl_Position = projectionMatrix * viewMatrix * worldPos;
+        }
+    `,
     fragmentShader: `
         uniform sampler2D uTexture;
+        uniform vec3 uColor;
         uniform vec3 uSunPosition;
+        uniform float uHasTexture;
 
         varying vec2 vUv;
         varying vec3 vNormal;
@@ -101,26 +102,31 @@ const globalPlanetMaterial = new THREE.ShaderMaterial({
         void main() {
             vec3 lightDir = normalize(uSunPosition - vWorldPosition);
             float diff = max(dot(vNormal, lightDir), 0.0);
+            
+            vec3 tex = vec3(1.0);
+            if (uHasTexture > 0.5) {
+                tex = texture2D(uTexture, vUv).rgb;
+            }
+           
+            vec3 baseColor = uColor * tex;
 
-            vec3 tex = texture2D(uTexture, vUv).rgb;
-
-            vec3 color = tex * (0.1 + diff); // ambient + diffuse
-            gl_FragColor = vec4(color, 1.0);
+            float ambient = 0.2;
+            vec3 finalColor = baseColor * (ambient + diff); 
+            
+            gl_FragColor = vec4(finalColor, 1.0);
         }
     `
-})
+});
 
 // =====================
 // Sphere
 // =====================
-function createSphere(radius = 1, widthSegments = 100, heightSegments = 100) {
+function createSphere(radius = 1, widthSegments = 100, heightSegments = 100, displacementNumber = 0.01) {
     const geometry = new THREE.BufferGeometry();
     const vertices = [];
     const normals = [];
     const uvs = [];
     const indices = [];
-
-    const displacementNumber = 0.01;
 
     const displacementMap = [];
 
@@ -241,9 +247,12 @@ function createPlanet({size, distance, color, texture, orbitSpeed, rotationSpeed
     let material;
     if (texture) {
         material = globalPlanetMaterial.clone()
+        material.uniforms.uHasTexture.value = 1.0;
         material.uniforms.uTexture.value = texture;
     } else {
-        material = new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.2 });
+        material = globalPlanetMaterial.clone();
+        material.uniforms.uHasTexture.value = 0.0;
+        material.uniforms.uColor.value = color;
     }
 
 
@@ -262,11 +271,15 @@ function createMoon(size, distance, color, texture, orbitSpeed, rotationSpeed) {
 
     let material;
     if (texture) {
-        material = globalPlanetMaterial.clone();
+        material = globalPlanetMaterial.clone()
+        material.uniforms.uHasTexture.value = 1.0;
         material.uniforms.uTexture.value = texture;
     } else {
-        material = new THREE.MeshStandardMaterial({ color, roughness: 0.7, metalness: 0.2 });
+        material = globalPlanetMaterial.clone();
+        material.uniforms.uHasTexture.value = 0.0;
+        material.uniforms.uColor.value = color;
     }
+
     const geometry = createSphere(size, );
     const moon = new THREE.Mesh(geometry, material);
 
@@ -278,6 +291,24 @@ function createMoon(size, distance, color, texture, orbitSpeed, rotationSpeed) {
     return { orbit: moonOrbit, moon, orbitSpeed, rotationSpeed };
 }
 
+function createAstroid(size, distance, color, orbitSpeed, rotationSpeed, displacement) {
+    const orbit = new THREE.Object3D();
+    scene.add(orbit);
+
+    const material = globalPlanetMaterial.clone();
+    material.uniforms.uHasTexture.value = 0.0;
+    material.uniforms.uColor.value = new THREE.Color(color);
+
+    const geometry = createSphere(size, 16, 16, displacement);
+    const astroid = new THREE.Mesh(geometry, material);
+
+    astroid.position.x = distance;
+    astroid.castShadow = true;
+    astroid.receiveShadow = true;
+    orbit.add(astroid);
+
+    return { orbit, astroid, orbitSpeed, rotationSpeed };
+}
 function createOrbitingModel({parentPlanet, modelPath, distance, scale = 1, orbitspeed = 0.01, rotationSpeed = 0.02, heightOffset = 0}) {
     const orbit = new THREE.Object3D();
     scene.add(orbit);
@@ -294,6 +325,7 @@ function createOrbitingModel({parentPlanet, modelPath, distance, scale = 1, orbi
 
                 const originalTexture = obj.material.map;
                 const shaderMaterial = globalPlanetMaterial.clone();
+                shaderMaterial.uniforms.uHasTexture.value = 1.0;
                 shaderMaterial.uniforms.uTexture.value = originalTexture;
                 obj.material = shaderMaterial;
             }
@@ -429,8 +461,36 @@ const satellites = [
     )
 ]
 
+// =====================
+// Astroid
+// =====================
+const astroids = [];
+const numAstroids = 8000;
 
+for (let i = 0; i < numAstroids; i++) {
+    // Variatie in afstand (bijv. tussen Mars en Jupiter)
+    const distance = 90 + Math.random() * 10;
 
+    // Variatie in grootte
+    const size = 0.1 + Math.random() * 0.2;
+
+    // Willekeurige start-rotatie voor de baan
+    const startAngle = Math.random() * Math.PI * 2;
+
+    const a = createAstroid(
+        size,
+        distance,
+        0x888888,          // Grijze steenkleur
+        0.0005 + Math.random() * 0.002, // Orbit snelheid
+        Math.random() * 0.02,          // Eigen rotatie
+        0.5                // Veel displacement voor grillige vorm
+    );
+
+    // Zet de orbit op de juiste beginpositie
+    a.orbit.rotation.y = startAngle;
+
+    astroids.push(a);
+}
 // =====================
 // HUD
 // =====================
@@ -521,6 +581,12 @@ function animate() {
             }
         }
     })
+
+    astroids.forEach(a => {
+        a.orbit.rotation.y += a.orbitSpeed * timeScale;
+        a.astroid.rotation.y += a.rotationSpeed * timeScale;
+        a.astroid.rotation.x += a.rotationSpeed * timeScale;
+    });
 
     updateHUD();
 
