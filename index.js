@@ -36,7 +36,6 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 50, 100);
 camera.lookAt(0, 0, 0);
 
-
 const controls = new PointerLockControls(camera, document.body);
 
 const move = {
@@ -197,8 +196,6 @@ sunLight.shadow.mapSize.height = 2048;
 sunLight.shadow.bias = -0.0005;
 
 scene.add(sunLight);
-
-// Zwak omgevingslicht
 scene.add(new THREE.AmbientLight(0xffffff, 0.05));
 
 // =====================
@@ -234,7 +231,6 @@ const sun = new THREE.Mesh(sunGeometry, sunMaterial);
 sun.castShadow = true;
 sun.receiveShadow = true;
 scene.add(sun);
-
 
 // =====================
 // Planeet functions
@@ -348,81 +344,21 @@ function createOrbitingModel({parentPlanet, modelPath, distance, scale = 1, orbi
 // =====================
 
 const planets = [
-    createPlanet({
-        size: 0.38,
-        distance: 13,
-        color: 0xaaaaaa,
-        texture: mercuryTexture,
-        orbitSpeed: 0.004,
-        rotationSpeed: 0.02
-    }), // Mercurius
-
-    createPlanet({
-        size: 0.95,
-        distance: 16,
-        texture: venusTexture,
-        orbitSpeed: 0.0035,
-        rotationSpeed: 0.01
-    }), // Venus
-
-    createPlanet({
-        size: 1.0,
-        distance: 23,
-        texture: earthTexture,
-        orbitSpeed: 0.003,
-        rotationSpeed: 0.02
-    }), // Aarde
-
-    createPlanet({
-        size: 0.53,
-        distance: 29,
-        color: 0xff0000,
-        texture: marsTexture,
-        orbitSpeed: 0.0025,
-        rotationSpeed: 0.02
-    }), // Mars
-
-    createPlanet({
-        size: 2.5,
-        distance: 37,
-        texture: jupiterTexture,
-        orbitSpeed: 0.0015,
-        rotationSpeed: 0.01
-    }), // Jupiter
-
-    createPlanet({
-        size: 2.0,
-        distance: 51,
-        texture: saturnTexture,
-        orbitSpeed: 0.0012,
-        rotationSpeed: 0.01
-    }), // Saturnus
-
-    createPlanet({
-        size: 1.5,
-        distance: 62,
-        texture: uranusTexture,
-        orbitSpeed: 0.0008,
-        rotationSpeed: 0.01
-    }), // Uranus
-
-    createPlanet({
-        size: 1.4,
-        distance: 74,
-        texture: neptuneTexture,
-        orbitSpeed: 0.0007,
-        rotationSpeed: 0.01
-    }) // Neptunus
+    createPlanet({size: 0.38, distance: 13, color: 0xaaaaaa, texture: mercuryTexture, orbitSpeed: 0.004, rotationSpeed: 0.02}), // Mercurius
+    createPlanet({size: 0.95, distance: 16,texture: venusTexture, orbitSpeed: 0.0035, rotationSpeed: 0.01}), // Venus
+    createPlanet({size: 1.0, distance: 23, texture: earthTexture, orbitSpeed: 0.003, rotationSpeed: 0.02}), // Aarde
+    createPlanet({size: 0.53, distance: 29, color: 0xff0000, texture: marsTexture, orbitSpeed: 0.0025, rotationSpeed: 0.02}), // Mars
+    createPlanet({size: 2.5, distance: 37, texture: jupiterTexture, orbitSpeed: 0.0015, rotationSpeed: 0.01}), // Jupiter
+    createPlanet({size: 2.0, distance: 51, texture: saturnTexture, orbitSpeed: 0.0012, rotationSpeed: 0.01}), // Saturnus
+    createPlanet({size: 1.5, distance: 62, texture: uranusTexture, orbitSpeed: 0.0008, rotationSpeed: 0.01}), // Uranus
+    createPlanet({size: 1.4, distance: 74, texture: neptuneTexture, orbitSpeed: 0.0007, rotationSpeed: 0.01}) // Neptunus
 ];
-
-
 
 // =====================
 // Planeten (manen)
 // =====================
 
 const earth = planets[2];
-
 const earthMoon = createMoon(0.3, 2.5, 0xffffff, moonTexture, 0.015, 0.01);
 scene.add(earthMoon.orbit);
 earthMoon.orbit.position.copy(earth.planet.position);
@@ -434,31 +370,10 @@ const mars = planets[3];
 
 const satellites = [
     createOrbitingModel(
-        {parentPlanet: mars,
-            modelPath: "models/iss/scene.gltf",
-            distance: 2,
-            scale: 0.0002,
-            orbitspeed: 0.01,
-            rotationSpeed: 0,
-            heightOffset: 0.3
-        }),
+        {parentPlanet: mars, modelPath: "models/iss/scene.gltf", distance: 2, scale: 0.0002, orbitspeed: 0.01, rotationSpeed: 0, heightOffset: 0.3}),
     createOrbitingModel(
-        {parentPlanet: earth,
-            modelPath: "models/sateliet/sat.gltf",
-            distance: 2,
-            scale: 0.03,
-            orbitspeed: 0.01,
-            rotationSpeed: 0,
-            heightOffset: 0.3
-        }),
-    createOrbitingModel(
-        {parentPlanet: planets[0],
-            modelPath: "models/sateliet/sat.gltf",
-            distance: 29,
-            orbitspeed: 0.002,
-            scale: 0.1,
-        }
-    )
+        {parentPlanet: earth, modelPath: "models/sateliet/sat.gltf", distance: 2, scale: 0.03, orbitspeed: 0.01, rotationSpeed: 0, heightOffset: 0.3}),
+    createOrbitingModel({parentPlanet: planets[0], modelPath: "models/sateliet/sat.gltf", distance: 29, orbitspeed: 0.002, scale: 0.1,})
 ]
 
 // =====================
@@ -474,10 +389,10 @@ for (let i = 0; i < numAstroids; i++) {
     const a = createAstroid(
         size,
         distance,
-        0x888888,          // Grijze steenkleur
-        0.0005 + Math.random() * 0.002, // Orbit snelheid
-        Math.random() * 0.02,          // Eigen rotatie
-        0.5                // Veel displacement voor grillige vorm
+        0x888888,
+        0.0005 + Math.random() * 0.002,
+        Math.random() * 0.02,
+        0.5
     );
     a.orbit.rotation.y = startAngle;
     astroids.push(a);
@@ -556,10 +471,12 @@ function animate() {
         p.planet.rotation.y += p.rotationSpeed * timeScale;
     });
 
+    // Manen
     earthMoon.orbit.rotation.y += earthMoon.orbitSpeed * timeScale;
     earthMoon.moon.rotation.y += earthMoon.rotationSpeed * timeScale;
     earth.planet.add(earthMoon.moon);
 
+    // Satellieten
     satellites.forEach(satelliteOrbit => {
         if (satelliteOrbit.userData.parentPlanet) {
             const planetPos = satelliteOrbit.userData.parentPlanet.planet.getWorldPosition(new THREE.Vector3());
@@ -573,6 +490,7 @@ function animate() {
         }
     })
 
+    // Astride
     astroids.forEach(a => {
         a.orbit.rotation.y += a.orbitSpeed * timeScale;
         a.astroid.rotation.y += a.rotationSpeed * timeScale;
