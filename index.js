@@ -435,16 +435,16 @@ const mars = planets[3];
 const satellites = [
     createOrbitingModel(
         {parentPlanet: mars,
-            modelPath: "models/sat.gltf",
+            modelPath: "models/iss/scene.gltf",
             distance: 2,
-            scale: 0.03,
+            scale: 0.0002,
             orbitspeed: 0.01,
             rotationSpeed: 0,
             heightOffset: 0.3
         }),
     createOrbitingModel(
         {parentPlanet: earth,
-            modelPath: "models/sat.gltf",
+            modelPath: "models/sateliet/sat.gltf",
             distance: 2,
             scale: 0.03,
             orbitspeed: 0.01,
@@ -453,8 +453,8 @@ const satellites = [
         }),
     createOrbitingModel(
         {parentPlanet: planets[0],
-            modelPath: "models/sat.gltf",
-            distance: 30,
+            modelPath: "models/sateliet/sat.gltf",
+            distance: 29,
             orbitspeed: 0.002,
             scale: 0.1,
         }
