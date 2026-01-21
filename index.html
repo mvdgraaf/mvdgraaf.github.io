@@ -5,34 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Computer Graphics</title>
     <style>
-        /* Basis styling om de hele pagina te vullen */
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Zorgt dat je geen scrollbars krijgt door de Three.js canvas */
+            overflow: hidden;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            /* Achtergrond voor als Three.js nog laadt */
             background: radial-gradient(circle at center, #1b2735 0%, #090a0f 100%);
         }
 
-        /* De container voor het glazen kaartje */
         .glass-card {
-            background: rgba(255, 255, 255, 0.05); /* Zeer transparant wit */
-            backdrop-filter: blur(15px); /* Het magische glas-effect */
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtiele rand */
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 20px;
             padding: 40px;
             width: 400px;
             text-align: center;
             box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
             color: white;
-            z-index: 100; /* Zorgt dat het boven de Three.js canvas zweeft */
+            z-index: 100;
             transition: transform 0.3s ease;
         }
 
@@ -60,7 +57,6 @@
             display: block;
         }
 
-        /* De knop */
         .btn-continue {
             margin-top: 30px;
             padding: 12px 30px;
@@ -83,8 +79,6 @@
             color: #000;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
         }
-
-        /* Overlay om alles eronder iets donkerder te maken */
         .overlay {
             position: fixed;
             top: 0;
